@@ -13,9 +13,16 @@ class Profile(models.Model):
         return f"{self.user.username} Profile"
 
 
-
-class Topic(models.Model):
+class Fag(models.Model):  # Fagmodellen
     name = models.CharField(max_length=200)
+
+
+    def __str__(self):
+        return self.name
+
+class Topic(models.Model): # Et fag kan ha mange topics her
+    name = models.CharField(max_length=200)
+    fag = models.ForeignKey(Fag, on_delete=models.CASCADE, related_name='topics')
 
     def __str__(self):
         return self.name

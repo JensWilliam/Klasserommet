@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
-from .models import Room, Topic, Message, Profile
+from .models import Room, Fag, Topic, Message, Profile
 from .forms import RoomForm, UserForm, ProfileForm
 # Create your views here.
 
@@ -63,8 +63,7 @@ def registerPage(request):
 
     return render(request, 'base/login_register.html', {'form': form})
 
-def homeTest(request):
-    return render(request, 'base/hometest.html')
+
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
@@ -117,9 +116,13 @@ def userProfile(request, pk):
 def createRoom(request):
     form = RoomForm()
     topics = Topic.objects.all()
+    all_fag = Fag.objects.all()  # Hent alle fag
     if request.method == 'POST':
         topic_name = request.POST.get('topic')
-        topic, created = Topic.objects.get_or_create(name=topic_name)
+        fag_id = request.POST.get('fag')  # Hent valgt fag fra dropdown
+        fag = Fag.objects.get(id=fag_id)  # Finn Fag-objektet basert på fag_id
+
+        topic, created = Topic.objects.get_or_create(name=topic_name, fag=fag)
 
         Room.objects.create(
             host=request.user,
@@ -129,7 +132,7 @@ def createRoom(request):
         )
         return redirect('home')
 
-    context = {'form': form, 'topics': topics}
+    context = {'form': form, 'topics': topics, 'all_fag': all_fag}
     return render(request, 'base/room_form.html', context)
 
 
