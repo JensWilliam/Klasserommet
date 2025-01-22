@@ -26,11 +26,6 @@ def loginPage(request):
     if request.method == 'POST':
         username = request.POST.get('username').lower()
         password = request.POST.get('password')
-
-        try:
-            user = User.objects.get(username=username)
-        except:
-            messages.error(request, 'User does not exist')
         
         user = authenticate(request, username=username, password=password)
 
@@ -38,7 +33,7 @@ def loginPage(request):
             login(request, user)
             return redirect('home')
         else:
-            messages.error(request, 'Username OR Password does not exist')
+            messages.error(request, 'Feil brukernavn eller passord')
 
     context = {'page': page}
     return render(request, 'base/login_register.html', context)
@@ -59,7 +54,31 @@ def registerPage(request):
             login(request, user)
             return redirect('home')
         else:
-            messages.error(request, 'An error occurred during registration')
+            
+            
+             # Fanger spesifikke passordfeil
+            password_error_found = False
+            if 'password2' in form.errors:
+                for error in form.errors['password2']:
+                    if "This password is too short" in error:
+                        messages.error(request, 'Passordet må være minst 8 tegn langt')
+                    elif "This password is too similar to the username" in error:
+                        messages.error(request, 'Passordet kan ikke være for likt brukernavnet')
+                    elif "This password is too common" in error:
+                        messages.error(request, 'Passordet kan ikke være et vanlig passord')
+                    elif "This password is entirely numeric" in error:
+                        messages.error(request, 'Passordet kan ikke bestå av kun tall')
+                    else:
+                        messages.error(request, 'En feil oppstod med passordet. Vennligst prøv igjen')
+                    password_error_found = True
+            
+            # Fanger spesifikke brukernavnfeil
+            if 'username' in form.errors:
+                messages.error(request, 'Brukernavnet er tatt. Prøv et annet')
+            
+            # hvis feilen ikke ligger i passord eller brukernavn, vises en generell feilmelding
+            if not password_error_found and 'username' not in form.errors:
+                messages.error(request, 'En feil oppstod under registreringen. Vennligst prøv igjen')
 
     return render(request, 'base/login_register.html', {'form': form})
 

@@ -13,6 +13,14 @@
       </div>
       <div class="layout__body">
         <h2 class="auth__tagline">Find your study partner</h2>
+        
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
         <form class="form" action="" method="POST">
           {% csrf_token %}
@@ -67,6 +75,15 @@
         </div>
       </div>
       <div class="layout__body">
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
         <h2 class="auth__tagline">Find your study partner</h2>
 
         <form class="form" action="" method="POST">

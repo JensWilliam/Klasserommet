@@ -424,7 +424,8 @@ a {
 .layout__box {
   width: 90%;
   max-width: 48rem;
-  min-height: 40rem;
+  max-height: fit-content;
+  /*min-height: 40rem;*/
   position: absolute;
   top: 50%;
   left: 50%;
@@ -815,6 +816,11 @@ a {
 /*==============================
 =>  Auth
 ================================*/
+
+.messages {
+  color: var(--color-error);
+  list-style: none;
+}
 
 .auth__tagline {
   text-align: center;
